@@ -18,12 +18,14 @@ class datafieldView extends Ui.DataField {
         var str = Ui.loadResource(Rez.Strings.data);
 	    
 	    currentPoint = [0, 0, 0];
-	    var dataArray = split(str, "|");
+	    dataArray = split(str, "|", false);
+	    str = null;
+	    //Sys.println(dataArray[0]);
 	    for(var i = 0; i < dataArray.size(); i++) {
-	    	dataArray[i] = split(dataArray[i], ",");
+	    	dataArray[i] = split(dataArray[i], ",", true);
 	    }
-	    
-	    Sys.println(dataArray);
+	    //Sys.println(dataArray[0]);
+	    //Sys.println(dataArray.size());
 	    if (Attention has :vibrate) {
 		    vibeProfile =
 		    [
@@ -75,7 +77,7 @@ class datafieldView extends Ui.DataField {
         // Call parent's onUpdate(dc) to redraw the layout
         View.onUpdate(dc);
         
-        var length = currentPoint[1]; // distance to next extreme
+        var length = currentPoint[1].format("%d"); // distance to next extreme
         var gradient = currentPoint[2]; // gradient
         var state = "EVEN";
         if(gradient > 2.5) {
@@ -100,25 +102,33 @@ class datafieldView extends Ui.DataField {
     	var point = false;
     	if(index < dataArray.size()) {
     		point = dataArray[index];
+    		dataArray[index] = null;
     		index++;
     	}
     	return point;
     }
     
-    function split(s, sep) {
+    function split(s, sep, convert) {
 	    var tokens = [];
 	
 	    var found = s.find(sep);
 	    while (found != null) {
 	        var token = s.substring(0, found);
-	        tokens.add(token);
-	
+	        if(convert) {
+	        	tokens.add(token.toFloat());
+	        } else {
+	        	tokens.add(token);
+        	}
 	        s = s.substring(found + sep.length(), s.length());
 	
 	        found = s.find(sep);
 	    }
 	
-	    tokens.add(s);
+	    if(convert) {
+        	tokens.add(s.toFloat());
+        } else {
+        	tokens.add(s);
+    	}
 	
 	    return tokens;
 	}
