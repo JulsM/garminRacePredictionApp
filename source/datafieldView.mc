@@ -29,9 +29,9 @@ class datafieldView extends Ui.DataField {
 	    if (Attention has :vibrate) {
 		    vibeProfile =
 		    [
-		        new Attention.VibeProfile(50, 1000), // On for two seconds
-		        new Attention.VibeProfile(0, 1000),  // Off for two seconds
-		        new Attention.VibeProfile(50, 1000) // On for two seconds
+		        new Attention.VibeProfile(100, 1000), // On for two seconds
+		        new Attention.VibeProfile(0, 2000),  // Off for two seconds
+		        new Attention.VibeProfile(100, 1000) // On for two seconds
 		    ];
 		}
         
@@ -72,34 +72,43 @@ class datafieldView extends Ui.DataField {
         // Set the background color
         //View.findDrawableById("Background").setColor(getBackgroundColor());
 
-      
+        
 
         // Call parent's onUpdate(dc) to redraw the layout
         View.onUpdate(dc);
-        
-        var length = currentPoint[1].format("%d"); // distance to next extreme
-        var gradient = currentPoint[2]; // gradient
-        var state = "EVEN";
-        if(gradient > 2.5) {
-        	state = "UP";
-        } else if(gradient < -2.5) {
-        	state = "DOWN";
-        }
-        gradient = gradient.format("%.2f");
-            
-        
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.clear();
-        dc.drawText(
-            dc.getWidth()/2,
-            dc.getHeight()/2,
-            dc.FONT_LARGE,
-            "Next " + length + " m " + state + "\nGradient: " + gradient,
+        if(currentPoint != null) {
+	        var length = currentPoint[1].format("%d"); // distance to next extreme
+	        var gradient = currentPoint[2]; // gradient
+	        var state = "EVEN";
+	        if(gradient > 2.5) {
+	        	state = "UP";
+	        } else if(gradient < -2.5) {
+	        	state = "DOWN";
+	        }
+	        gradient = gradient.format("%.2f");
+                
+	        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+	        dc.clear();
+	        dc.drawText(
+	            dc.getWidth()/2,
+	            dc.getHeight()/2,
+	            dc.FONT_LARGE,
+	            "Next " + length + " m " + state + "\nGradient: " + gradient,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        } else {
+        	dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+	        dc.clear();
+	        dc.drawText(
+	            dc.getWidth()/2,
+	            dc.getHeight()/2,
+	            dc.FONT_LARGE,
+	            "GOAL",
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        }
     }
     
     function getNextPoint() {
-    	var point = false;
+    	var point = null;
     	if(index < dataArray.size()) {
     		point = dataArray[index];
     		dataArray[index] = null;
