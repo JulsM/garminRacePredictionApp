@@ -10,12 +10,15 @@ class datafieldView extends Ui.DataField {
     var currentPoint; // extremePointDist, nextDist, gradient
     var index = 0;
     var vibeProfile;
+    var goalReached = false;
     
 
     function initialize() {
         DataField.initialize();
         elapsedDist = 0;
-        var str = Ui.loadResource(Rez.Strings.data);
+        //var str = Ui.loadResource(Rez.Strings.data);
+        var str = Application.getApp().getProperty("dataString");
+        //Sys.println(mySetting);
 	    
 	    currentPoint = [0, 0, 0];
 	    dataArray = split(str, "|", false);
@@ -54,7 +57,7 @@ class datafieldView extends Ui.DataField {
     function compute(info) {
         // See Activity.Info in the documentation for available information.
         if(info has :elapsedDistance){
-            if(info.elapsedDistance != null){
+            if(info.elapsedDistance != null && !goalReached){
                 elapsedDist = info.elapsedDistance;
                 //Sys.println(elapsedDist);
                 if(elapsedDist >= currentPoint[0]) {
@@ -76,13 +79,13 @@ class datafieldView extends Ui.DataField {
 
         // Call parent's onUpdate(dc) to redraw the layout
         View.onUpdate(dc);
-        if(currentPoint != null) {
+        if(currentPoint != null && !goalReached) {
 	        var length = currentPoint[1].format("%d"); // distance to next extreme
 	        var gradient = currentPoint[2]; // gradient
 	        var state = "EVEN";
-	        if(gradient > 2.5) {
+	        if(gradient > 1.5) {
 	        	state = "UP";
-	        } else if(gradient < -2.5) {
+	        } else if(gradient < -1.5) {
 	        	state = "DOWN";
 	        }
 	        gradient = gradient.format("%.2f");
@@ -104,6 +107,7 @@ class datafieldView extends Ui.DataField {
 	            dc.FONT_LARGE,
 	            "GOAL",
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            goalReached = true;
         }
     }
     

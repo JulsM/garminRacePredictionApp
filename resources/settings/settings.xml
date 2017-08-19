@@ -1,0 +1,5 @@
+<settings>
+	<setting propertyKey="@Properties.dataString" title="@Strings.dataLabel">
+        <settingConfig type="alphaNumeric" required="true" />
+    </setting>
+</settings>
